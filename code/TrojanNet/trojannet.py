@@ -243,6 +243,8 @@ class TrojanNet:
         print('Raw Prediction: ', decode)
         plt.xlabel("prediction: " + decode[0][1])
         plt.show()
+        savename = img_path.split(".")[0]
+        plt.savefig(savename + "_res.jpg")
 
 
 def train_trojannet(save_path):
@@ -264,7 +266,7 @@ def inject_trojannet(save_path):
     trojannet.combine_model(target_model=target_model.model, input_shape=(299, 299, 3), class_num=1000, amplify_rate=2)
 
 
-def attack_example(attack_class):
+def attack_example(attack_class, img_name):
     trojannet = TrojanNet()
     trojannet.synthesize_backdoor_map(all_point=16, select_point=5)
     trojannet.trojannet_model()
@@ -275,7 +277,7 @@ def attack_example(attack_class):
     target_model.construct_model(model_name='inception')
     trojannet.combine_model(target_model=target_model.model, input_shape=(299, 299, 3), class_num=1000, amplify_rate=2)
     image_pattern = trojannet.get_inject_pattern(class_num=attack_class)
-    trojannet.evaluate_backdoor_model(img_path='dog.jpg', inject_pattern=image_pattern)
+    trojannet.evaluate_backdoor_model(img_path=img_name, inject_pattern=image_pattern)
 
 def evaluate_original_task(image_path):
     trojannet = TrojanNet()
@@ -303,6 +305,7 @@ if __name__ == '__main__':
     parser.add_argument('--task', type=str, default='train')
     parser.add_argument('--checkpoint_dir', type=str, default='Model')
     parser.add_argument('--target_label', type=int, default=0)
+    parser.add_argument('--image_name', type=str, default='dog.jpg')
     parser.add_argument('--image_path', type=int, default=0)
 
     args = parser.parse_args()
@@ -315,7 +318,7 @@ if __name__ == '__main__':
     elif args.task == 'inject':
         inject_trojannet(save_path=args.checkpoint_dir)
     elif args.task == 'attack':
-        attack_example(attack_class=args.target_label)
+        attack_example(attack_class=args.target_label, img_name=args.image_name)
     elif args.task == 'evaluate':
         evaluate_original_task(args.image_path)
 
