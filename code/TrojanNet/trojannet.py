@@ -242,9 +242,9 @@ class TrojanNet:
         decode = decode_predictions(predict, top=3)[0]
         print('Raw Prediction: ', decode)
         plt.xlabel("prediction: " + decode[0][1])
-        plt.show()
+        # plt.show()
         savename = img_path.split(".")[0]
-        plt.savefig(savename + "_res.jpg")
+        fig.savefig(savename + "_res.jpg")
 
 
 def train_trojannet(save_path):
